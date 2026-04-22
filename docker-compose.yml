@@ -1,0 +1,31 @@
+services:
+
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pedidos_db
+      MYSQL_USER: pedidos_user
+      MYSQL_PASSWORD: pedidos_pass
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    ports:
+      - "3307:3306"
+
+  app:
+    build: .
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: pedidos_db
+      DB_USERNAME: pedidos_user
+      DB_PASSWORD: pedidos_pass
+    ports:
+      - "8080:8080"
