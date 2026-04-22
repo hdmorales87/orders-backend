@@ -19,25 +19,25 @@ import java.util.Map;
 @CrossOrigin
 public class PedidoController {
 
-    private final CrearPedidoUseCase useCase;
-    private final PedidoRepository repo;
+    private final CrearPedidoUseCase crearPedidoUseCase;
+    private final PedidoRepository pedidoRepository;
 
-    public PedidoController(CrearPedidoUseCase useCase, PedidoRepository repo) {
-        this.useCase = useCase;
-        this.repo = repo;
+    public PedidoController(CrearPedidoUseCase crearPedidoUseCase, PedidoRepository pedidoRepository) {
+        this.crearPedidoUseCase = crearPedidoUseCase;
+        this.pedidoRepository = pedidoRepository;
     }
 
     @PostMapping
-    public void crear(@RequestBody Map<String, Object> req) {
-        Pedido p = new Pedido(
-                (String) req.get("nombre"),
-                ((Number) req.get("total")).doubleValue()
+    public void crear(@RequestBody Map<String, Object> request) {
+        Pedido pedido = new Pedido(
+                (String) request.get("nombre"),
+                ((Number) request.get("total")).doubleValue()
         );
-        useCase.ejecutar(p);
+        crearPedidoUseCase.ejecutar(pedido);
     }
 
     @GetMapping
     public List<Pedido> listar() {
-        return repo.listar();
+        return pedidoRepository.listar();
     }
 }

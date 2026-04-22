@@ -9,24 +9,24 @@ import java.util.List;
 @Component
 public class PedidoRepositoryAdapter implements PedidoRepository {
 
-    private final SpringDataPedidoRepository jpa;
+    private final SpringDataPedidoRepository springDataPedidoRepository;
 
-    public PedidoRepositoryAdapter(SpringDataPedidoRepository jpa) {
-        this.jpa = jpa;
+    public PedidoRepositoryAdapter(SpringDataPedidoRepository springDataPedidoRepository) {
+        this.springDataPedidoRepository = springDataPedidoRepository;
     }
 
     @Override
     public void guardar(Pedido pedido) {
-        PedidoEntity e = new PedidoEntity();
-        e.setNombre(pedido.getNombre());
-        e.setTotal(pedido.getTotal());
-        jpa.save(e);
+        PedidoEntity pedidoEntity = new PedidoEntity();
+        pedidoEntity.setNombre(pedido.getNombre());
+        pedidoEntity.setTotal(pedido.getTotal());
+        springDataPedidoRepository.save(pedidoEntity);
     }
 
     @Override
     public List<Pedido> listar() {
-        return jpa.findAll().stream()
-                .map(e -> new Pedido(e.getNombre(), e.getTotal()))
+        return springDataPedidoRepository.findAll().stream()
+                .map(pedidoEntity -> new Pedido(pedidoEntity.getNombre(), pedidoEntity.getTotal()))
                 .toList();
     }
 }

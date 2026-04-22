@@ -11,7 +11,7 @@ import domain.port.in.CrearPedidoUseCase;
 public class BeanConfig {
 
     @Bean
-    public CrearPedidoUseCase crearPedidoUseCase(PedidoRepository repo) {
-        return new CrearPedidoService(repo);
+    public CrearPedidoUseCase crearPedidoUseCase(PedidoRepository pedidoRepository) {
+        return new CrearPedidoService(pedidoRepository);
     }
 }

@@ -6,13 +6,13 @@ import domain.port.out.PedidoRepository;
 
 public class CrearPedidoService implements CrearPedidoUseCase {
 
-    private final PedidoRepository repo;
+    private final PedidoRepository pedidoRepository;
 
     public CrearPedidoService(PedidoRepository repo) {
-        this.repo = repo;
+        this.pedidoRepository = repo;
     }
 
     public void ejecutar(Pedido pedido) {
-        repo.guardar(pedido);
+        pedidoRepository.guardar(pedido);
     }
 }
