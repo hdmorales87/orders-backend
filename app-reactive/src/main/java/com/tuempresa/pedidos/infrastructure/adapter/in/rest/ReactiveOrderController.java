@@ -15,10 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
+import jakarta.validation.Valid;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/orders")
@@ -41,11 +40,8 @@ public class ReactiveOrderController {
     }
 
     @PostMapping
-    public Mono<Void> create(@RequestBody Map<String, Object> request) {
-        Order order = new Order(
-                (String) request.get("name"),
-                ((Number) request.get("total")).doubleValue()
-        );
+    public Mono<Void> create(@Valid @RequestBody CreateOrderRequest request) {
+        Order order = new Order(request.getName(), request.getTotal());
         return createOrderReactiveUseCase.execute(order);
     }
 
@@ -55,11 +51,8 @@ public class ReactiveOrderController {
     }
 
     @PutMapping("/{id}")
-    public Mono<Void> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
-        Order order = new Order(
-                (String) request.get("name"),
-                ((Number) request.get("total")).doubleValue()
-        );
+    public Mono<Void> update(@PathVariable Long id, @Valid @RequestBody UpdateOrderRequest request) {
+        Order order = new Order(request.getName(), request.getTotal());
         return updateOrderReactiveUseCase.execute(id, order);
     }
 

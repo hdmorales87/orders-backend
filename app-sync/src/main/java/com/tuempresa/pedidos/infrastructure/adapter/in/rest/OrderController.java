@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/orders")
@@ -37,11 +38,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public void create(@RequestBody Map<String, Object> request) {
-        Order order = new Order(
-                (String) request.get("name"),
-                ((Number) request.get("total")).doubleValue()
-        );
+    public void create(@Valid @RequestBody CreateOrderRequest request) {
+        Order order = new Order(request.getName(), request.getTotal());
         createOrderUseCase.execute(order);
     }
 
@@ -51,11 +49,8 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public void update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
-        Order order = new Order(
-                (String) request.get("name"),
-                ((Number) request.get("total")).doubleValue()
-        );
+    public void update(@PathVariable Long id, @Valid @RequestBody UpdateOrderRequest request) {
+        Order order = new Order(request.getName(), request.getTotal());
         updateOrderUseCase.execute(id, order);
     }
 
