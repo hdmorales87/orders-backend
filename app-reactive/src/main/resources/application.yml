@@ -3,12 +3,12 @@ server:
 
 spring:
   application:
-    name: pedidos-reactive
+    name: orders-reactive
 
   r2dbc:
-    url: r2dbc:mysql://${DB_HOST:localhost}:${DB_PORT:3307}/${DB_NAME:pedidos_db}?useServerPrepareStatement=true&serverZoneId=UTC
-    username: ${DB_USERNAME:pedidos_user}
-    password: ${DB_PASSWORD:pedidos_pass}
+    url: r2dbc:mysql://${DB_HOST:localhost}:${DB_PORT:3307}/${DB_NAME:orders_db}?useServerPrepareStatement=true&serverZoneId=UTC
+    username: ${DB_USERNAME:orders_user}
+    password: ${DB_PASSWORD:orders_pass}
 
   jackson:
     serialization:

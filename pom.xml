@@ -12,12 +12,12 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.tuempresa</groupId>
-    <artifactId>pedido-backend-parent</artifactId>
+    <groupId>com.company</groupId>
+    <artifactId>orders-backend-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>pedido-backend-parent</name>
-    <description>Backend pedidos - multi module</description>
+    <name>orders-backend-parent</name>
+    <description>Orders backend - multi module</description>
 
     <properties>
         <java.version>17</java.version>

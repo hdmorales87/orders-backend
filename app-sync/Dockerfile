@@ -13,7 +13,7 @@ FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-COPY --from=build /app/app-sync/target/pedido-app-sync-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/app-sync/target/orders-app-sync-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 

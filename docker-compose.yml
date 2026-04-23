@@ -4,9 +4,9 @@ services:
     image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: pedidos_db
-      MYSQL_USER: pedidos_user
-      MYSQL_PASSWORD: pedidos_pass
+      MYSQL_DATABASE: orders_db
+      MYSQL_USER: orders_user
+      MYSQL_PASSWORD: orders_pass
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -28,9 +28,9 @@ services:
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
-      DB_NAME: pedidos_db
-      DB_USERNAME: pedidos_user
-      DB_PASSWORD: pedidos_pass
+      DB_NAME: orders_db
+      DB_USERNAME: orders_user
+      DB_PASSWORD: orders_pass
     ports:
       - "8080:8080"
 
@@ -44,9 +44,9 @@ services:
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
-      DB_NAME: pedidos_db
-      DB_USERNAME: pedidos_user
-      DB_PASSWORD: pedidos_pass
+      DB_NAME: orders_db
+      DB_USERNAME: orders_user
+      DB_PASSWORD: orders_pass
     ports:
       - "8081:8081"
 

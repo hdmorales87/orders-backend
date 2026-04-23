@@ -6,13 +6,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.tuempresa</groupId>
-        <artifactId>pedido-backend-parent</artifactId>
+        <groupId>com.company</groupId>
+        <artifactId>orders-backend-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>pedido-core</artifactId>
-    <name>pedido-core</name>
+    <artifactId>orders-core</artifactId>
+    <name>orders-core</name>
 
     <dependencies>
         <dependency>

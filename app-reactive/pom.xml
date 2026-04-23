@@ -6,18 +6,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.tuempresa</groupId>
-        <artifactId>pedido-backend-parent</artifactId>
+        <groupId>com.company</groupId>
+        <artifactId>orders-backend-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>pedido-app-reactive</artifactId>
-    <name>pedido-app-reactive</name>
+    <artifactId>orders-app-reactive</artifactId>
+    <name>orders-app-reactive</name>
 
     <dependencies>
         <dependency>
-            <groupId>com.tuempresa</groupId>
-            <artifactId>pedido-core</artifactId>
+            <groupId>com.company</groupId>
+            <artifactId>orders-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -60,7 +60,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.tuempresa.pedidos.infrastructure.OrdersReactiveApplication</mainClass>
+                    <mainClass>com.company.orders.infrastructure.OrdersReactiveApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
