@@ -150,3 +150,175 @@ Both applications use the following environment variables for RabbitMQ connectio
 - `RABBITMQ_USERNAME`: orders_user
 - `RABBITMQ_PASSWORD`: orders_pass
 - `RABBITMQ_VIRTUAL_HOST`: orders_vhost
+
+## Architecture Analysis
+
+### Hexagonal Architecture (Ports & Adapters)
+
+The project implements **Hexagonal Architecture** with clear separation of concerns:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Infrastructure Layer                        │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │
+│  │   REST API  │  │   Messaging  │  │   Email     │  │
+│  │  Controllers │  │  Adapters   │  │  Adapters   │  │
+│  └─────────────┘  └─────────────┘  └─────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                   Application Layer                           │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │
+│  │ Use Cases   │  │   Services   │  │   DTOs      │  │
+│  │ (Business    │  │ (Orchestrate │  │ (Request/   │  │
+│  │  Logic)     │  │  Use Cases)  │  │ Response)   │  │
+│  └─────────────┘  └─────────────┘  └─────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                     Domain Layer                            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │
+│  │   Models    │  │    Ports    │  │  Constants  │  │
+│  │ (Entities)  │  │ (Interfaces) │  │ (Config)    │  │
+│  └─────────────┘  └─────────────┘  └─────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### SOLID Principles Applied
+
+#### **S - Single Responsibility Principle (SRP)**
+- **Order Model**: Only handles order data and validation
+- **SMTPEmailAdapter**: Solely responsible for email sending
+- **RabbitMQAdapter**: Exclusively handles message queue operations
+- **OrderConsumer**: Only processes incoming messages and sends confirmations
+- **Controllers**: Only handle HTTP request/response mapping
+
+#### **O - Open/Closed Principle (OCP)**
+- **Port Interfaces**: Open for extension, closed for modification
+- **Adapter Pattern**: New implementations can be added without changing existing code
+- **Message Queue Ports**: Can add new messaging systems without modifying business logic
+
+#### **L - Liskov Substitution Principle (LSP)**
+- **AsyncMessageQueuePort**: Both reactive and sync implementations are interchangeable
+- **OrderRepository**: Reactive and sync implementations can be substituted
+- **EmailNotificationPort**: Different email providers can be swapped seamlessly
+
+#### **I - Interface Segregation Principle (ISP)**
+- **Separate Ports**: `EmailNotificationPort`, `MessageQueuePort`, `OrderRepository`
+- **Specific Methods**: Each interface contains only related methods
+- **Client-Specific**: No client is forced to implement unused methods
+
+#### **D - Dependency Inversion Principle (DIP)**
+- **Dependencies Inverted**: High-level modules depend on abstractions (ports)
+- **Constructor Injection**: Dependencies injected through constructors
+- **Configuration Classes**: Bean definitions manage dependency creation
+
+### Design Patterns Implemented
+
+#### **Adapter Pattern**
+```java
+// Infrastructure adapts to domain ports
+public class SMTPEmailAdapter implements EmailNotificationPort
+public class AsyncRabbitMQAdapter implements AsyncMessageQueuePort
+public class ReactiveOrderRepositoryAdapter implements OrderRepository
+```
+
+#### **Strategy Pattern**
+- **Messaging Strategies**: Different implementations for reactive vs sync
+- **Persistence Strategies**: R2DBC vs JPA approaches
+- **Notification Strategies**: Email vs other notification channels
+
+#### **Factory Pattern**
+- **BeanConfig**: Creates and configures use case implementations
+- **MessageConverter**: Factory for JSON message conversion
+
+#### **Observer Pattern**
+- **Reactive Streams**: Flux/Mono as observable sequences
+- **Message Queue**: Consumers observe queue for messages
+
+#### **Command Pattern**
+- **Use Cases**: Each use case encapsulates a business command
+- **REST Controllers**: HTTP requests mapped to command objects
+
+#### **Request-Reply Pattern**
+- **Correlation IDs**: Track request-response pairs
+- **Reply Queues**: Separate queues for responses
+- **Timeout Handling**: Prevents indefinite waiting
+
+### Clean Code Principles
+
+#### **Meaningful Names**
+```java
+// Clear, descriptive names
+CreateOrderReactiveUseCase
+AsyncMessageQueuePort
+SMTPEmailAdapter
+OrderConsumer
+```
+
+#### **Small, Focused Functions**
+```java
+// Single responsibility per method
+public Mono<Void> sendMessageAndWaitConfirmation(String queueName, Object message)
+public Mono<Void> sendConfirmation(String replyQueueName, String correlationId)
+```
+
+#### **No Duplication (DRY)**
+- **Constants**: `RabbitMQConfig.ORDER_NOTIFICATIONS_QUEUE`
+- **Shared Domain**: Core module contains common models and ports
+- **Configuration**: Centralized in config classes
+
+#### **Comments and Documentation**
+- **Purpose Documentation**: Clear comments explaining business logic
+- **Configuration Comments**: Docker and environment variable documentation
+- **API Documentation**: REST endpoints clearly documented
+
+#### **Error Handling**
+```java
+// Consistent error handling patterns
+.onErrorContinue((error, throwable) -> {
+    System.err.println("Error in order processing: " + error.getMessage());
+});
+```
+
+#### **Configuration Management**
+- **Environment Variables**: Externalized configuration
+- **Bean Configuration**: Dependency injection setup
+- **Modular Configuration**: Separate config classes per concern
+
+### Architectural Benefits
+
+#### **Maintainability**
+- **Clear Boundaries**: Each layer has distinct responsibilities
+- **Loose Coupling**: Dependencies are interfaces, not implementations
+- **High Cohesion**: Related functionality grouped together
+
+#### **Testability**
+- **Interface Mocking**: Easy to mock dependencies
+- **Unit Testing**: Each component can be tested in isolation
+- **Integration Testing**: Clear test boundaries at adapter level
+
+#### **Scalability**
+- **Horizontal Scaling**: Each app can be scaled independently
+- **Message Queue**: Asynchronous processing enables load distribution
+- **Reactive Programming**: Non-blocking I/O for better throughput
+
+#### **Flexibility**
+- **Technology Agnostic**: Easy to swap implementations
+- **Multi-Environment**: Configuration-driven deployment
+- **Hybrid Approach**: Both sync and reactive patterns supported
+
+### Technology Stack Alignment
+
+#### **Domain-Driven Design (DDD)**
+- **Ubiquitous Language**: Order, Repository, Use Case
+- **Bounded Contexts**: Core domain shared across applications
+- **Domain Events**: Message queue events represent domain events
+
+#### **Reactive Programming**
+- **Backpressure Handling**: Reactive streams manage flow control
+- **Non-blocking**: Better resource utilization
+- **Event-Driven**: Message queue enables event-driven architecture
+
+#### **Microservices Ready**
+- **Service Boundaries**: Clear separation between sync and reactive apps
+- **Independent Deployment**: Each app can be deployed separately
+- **Inter-service Communication**: Message queue for async communication
