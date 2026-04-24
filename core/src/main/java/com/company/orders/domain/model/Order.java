@@ -6,6 +6,10 @@ public class Order {
     private double total;
     private int statusId;
 
+    // Default constructor for Jackson deserialization
+    public Order() {
+    }
+
     public Order(String name, double total) {
         this(null, name, total, 0);
     }

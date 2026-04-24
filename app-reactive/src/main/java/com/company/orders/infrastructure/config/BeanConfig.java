@@ -9,6 +9,8 @@ import com.company.orders.application.reactive.port.in.ListOrdersReactiveUseCase
 import com.company.orders.application.reactive.port.in.UpdateOrderReactiveUseCase;
 import com.company.orders.application.reactive.port.in.DeleteOrderReactiveUseCase;
 import com.company.orders.domain.port.out.OrderRepository;
+import com.company.orders.domain.port.out.AsyncMessageQueuePort;
+import com.company.orders.domain.port.out.EmailNotificationPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,8 +18,10 @@ import org.springframework.context.annotation.Configuration;
 public class BeanConfig {
 
     @Bean
-    public CreateOrderReactiveUseCase createOrderReactiveUseCase(OrderRepository orderRepository) {
-        return new CreateOrderReactiveService(orderRepository);
+    public CreateOrderReactiveUseCase createOrderReactiveUseCase(OrderRepository orderRepository,
+                                                               AsyncMessageQueuePort messageQueue,
+                                                               EmailNotificationPort emailNotification) {
+        return new CreateOrderReactiveService(orderRepository, messageQueue, emailNotification);
     }
 
     @Bean

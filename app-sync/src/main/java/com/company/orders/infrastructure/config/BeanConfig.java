@@ -12,13 +12,17 @@ import com.company.orders.application.port.in.ListOrdersUseCase;
 import com.company.orders.application.port.in.UpdateOrderUseCase;
 import com.company.orders.application.port.in.DeleteOrderUseCase;
 import com.company.orders.domain.port.out.OrderRepository;
+import com.company.orders.domain.port.out.AsyncMessageQueuePort;
+import com.company.orders.domain.port.out.EmailNotificationPort;
 
 @Configuration
 public class BeanConfig {
 
     @Bean
-    public CreateOrderUseCase createOrderUseCase(OrderRepository orderRepository) {
-        return new CreateOrderService(orderRepository);
+    public CreateOrderUseCase createOrderUseCase(OrderRepository orderRepository,
+                                               AsyncMessageQueuePort messageQueue,
+                                               EmailNotificationPort emailNotification) {
+        return new CreateOrderService(orderRepository, messageQueue, emailNotification);
     }
 
     @Bean

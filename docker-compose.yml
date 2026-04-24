@@ -1,5 +1,23 @@
 services:
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: orders_user
+      RABBITMQ_DEFAULT_PASS: orders_pass
+      RABBITMQ_DEFAULT_VHOST: orders_vhost
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
   mysql:
     image: mysql:8
     environment:
@@ -25,12 +43,27 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
       DB_NAME: orders_db
       DB_USERNAME: orders_user
       DB_PASSWORD: orders_pass
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: orders_user
+      RABBITMQ_PASSWORD: orders_pass
+      RABBITMQ_VIRTUAL_HOST: orders_vhost
+      # Gmail SMTP Configuration (Demo)
+      EMAIL_SMTP_HOST: smtp.gmail.com
+      EMAIL_SMTP_PORT: 587
+      EMAIL_SMTP_USERNAME: warrior1987@gmail.com
+      EMAIL_SMTP_PASSWORD: zywliihdoprjqalt
+      EMAIL_SMTP_USE_SSL: false
+      EMAIL_SMTP_USE_STARTTLS: true
+      EMAIL_FROM: orders@company.com
     ports:
       - "8080:8080"
 
@@ -41,14 +74,30 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
       DB_NAME: orders_db
       DB_USERNAME: orders_user
       DB_PASSWORD: orders_pass
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: orders_user
+      RABBITMQ_PASSWORD: orders_pass
+      RABBITMQ_VIRTUAL_HOST: orders_vhost
+      # Gmail SMTP Configuration (Demo)
+      EMAIL_SMTP_HOST: smtp.gmail.com
+      EMAIL_SMTP_PORT: 587
+      EMAIL_SMTP_USERNAME: warrior1987@gmail.com
+      EMAIL_SMTP_PASSWORD: zywliihdoprjqalt
+      EMAIL_SMTP_USE_SSL: false
+      EMAIL_SMTP_USE_STARTTLS: true
+      EMAIL_FROM: warrior1987@gmail.com
     ports:
       - "8081:8081"
 
 volumes:
   mysql_data:
+  rabbitmq_data:
